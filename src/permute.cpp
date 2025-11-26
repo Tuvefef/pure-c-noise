@@ -1,7 +1,4 @@
-#ifndef PERMUTEH
-#define PERMUTEH
-
-#include "gfunctions.h"
+#include "program/util/permute.hpp"
 
 unsigned int permute[512];
 
@@ -43,14 +40,12 @@ float renderHash3d(int x, int y, int z)
 gvector2 unitGradient(float x, float y)
 {
     float g = renderHash2d((int)x, (int)y) * PI2;
-    return (gvector2){sin(g), cos(g)};
+    return {sinf(g), cosf(g)};
 }
 
 gvector3 unitGradient3d(float x, float y, float z)
 {
     float g1 = renderHash3d((int)x, (int)y, (int)z) * PI2;
     float g2 = renderHash3d((int)x + 1, (int)y + 1, (int)z + 1) * PI2;
-    return (gvector3){sin(g1) * cos(g2), sin(g1) * sin(g2), cos(g1)};
+    return {sinf(g1) * cosf(g2), sinf(g1) * sinf(g2), cosf(g1)};
 }
-
-#endif

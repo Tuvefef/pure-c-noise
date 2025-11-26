@@ -1,17 +1,21 @@
-#ifndef PERLIN_NOISE_H
-#define PERLIN_NOISE_H
+#include "program/core/gnoise.hpp"
+#include "program/core/config.hpp"
 
-#include "../util/gfunctions.h"
-#include "../util/permute.h"
+PerlinNoise2d::PerlinNoise2d(gvector2 &coord) :
+    datacoord(coord)
+{}
+PerlinNoise3d::PerlinNoise3d(gvector3 &coord) :
+    datacoord(coord)
+{}
 
-float computePerlinNoise2d(gvector2 texcoord)
+float PerlinNoise2d::computeNoise()
 {
     gvector2 gi;
-    gi.x = floor(texcoord.x);
-    gi.y = floor(texcoord.y);
+    gi.x = floor(datacoord.x);
+    gi.y = floor(datacoord.y);
     gvector2 gg;
-    gg.x = gfract(texcoord.x);
-    gg.y = gfract(texcoord.y);
+    gg.x = gfract(datacoord.x);
+    gg.y = gfract(datacoord.y);
 
     gvector2 g00 = unitGradient(gi.x, gi.y);
     gvector2 g10 = unitGradient(gi.x + 1, gi.y);
@@ -34,16 +38,16 @@ float computePerlinNoise2d(gvector2 texcoord)
     return GMIX(GMIX(v00, v10, uu.x), GMIX(v01, v11, uu.x), uu.y);
 }
 
-float computePerlinNoise3d(gvector3 texcoord)
+float PerlinNoise3d::computeNoise()
 {
     gvector3 gi;
-    gi.x = floor(texcoord.x);
-    gi.y = floor(texcoord.y);
-    gi.z = floor(texcoord.z);
+    gi.x = floor(datacoord.x);
+    gi.y = floor(datacoord.y);
+    gi.z = floor(datacoord.z);
     gvector3 gg;
-    gg.x = gfract(texcoord.x);
-    gg.y = gfract(texcoord.y);
-    gg.z = gfract(texcoord.z);
+    gg.x = gfract(datacoord.x);
+    gg.y = gfract(datacoord.y);
+    gg.z = gfract(datacoord.z);
 
     gvector3 g000 = unitGradient3d(gi.x, gi.y, gi.z);
     gvector3 g100 = unitGradient3d(gi.x + 1, gi.y, gi.z);
@@ -85,4 +89,36 @@ float computePerlinNoise3d(gvector3 texcoord)
     return GMIX(GMIX(x00, x10, uu.y), GMIX(x01, x11, uu.y), uu.z);
 }
 
-#endif
+float PerlinNoise2d::fractBrwnMot()
+{
+    float g = exp2(-1.0);
+    float f = 1.0;
+    float a = 1.0;
+    float t = 0.0;
+    for(int i = 0; i < octaves; i++)
+    {
+        gvector2 coord {datacoord.x * f, datacoord.y * f};
+        PerlinNoise2d pn(coord);
+        t += pn.computeNoise() * a;
+        f *= 2.0;
+        a *= g;
+    }
+    return t;
+}
+
+float PerlinNoise3d::fractBrwnMot()
+{
+    float g = exp2(-1.0);
+    float f = 1.0;
+    float a = 1.0;
+    float t = 0.0;
+    for(int i = 0; i < octaves; i++)
+    {
+        gvector3 coord {datacoord.x * f, datacoord.y * f, datacoord.z * f};
+        PerlinNoise3d pn(coord);
+        t += pn.computeNoise() * a;
+        f *= 2.0;
+        a *= g;
+    }
+    return t;
+}

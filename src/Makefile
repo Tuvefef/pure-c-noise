@@ -1,11 +1,11 @@
-SOURCES := main.c
+SOURCES := main.cpp gnoise.cpp gfunctions.cpp permute.cpp
 BIN = noise
-CC = gcc
+CC = g++
 CFLAGS = -std=c11 -O2
 LIBS = -lm
 
 all: $(SOURCES)
-		$(CC) $(CFLAGS) $(SOURCES) -o $(BIN) $(LIBS)
+		$(CC) $(SOURCES) -o $(BIN)
 
 run:
 	./$(BIN)
